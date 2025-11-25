@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Location - HOSTER BD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .ip-info-card {
+            background: linear-gradient(135deg, #2d3436, #636e72);
+            color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.php">
+                <i class="fas fa-cloud-upload-alt me-2"></i>HOSTER BD
+            </a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="index.php">
+                    <i class="fas fa-arrow-left me-1"></i>Back to File Manager
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>IP Location Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="ip-info-card p-4 mb-3">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-globe fa-3x"></i>
+                                <h4 class="mt-2" id="ipAddress">Loading...</h4>
+                            </div>
+                            <div id="ipInfoContent">
+                                <div class="text-center">
+                                    <div class="spinner-border text-light" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2 mb-0">Fetching IP information...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <img id="locationMap" src="" alt="Location Map" class="img-fluid rounded" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('get_ip_info.php')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('ipAddress').textContent = data.ip;
+                    
+                    if (data.status === 'success') {
+                        document.getElementById('ipInfoContent').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-flag me-2"></i>Country:</strong> ${data.country} (${data.countryCode})</p>
+                                    <p><strong><i class="fas fa-city me-2"></i>Region:</strong> ${data.regionName}</p>
+                                    <p><strong><i class="fas fa-map-marker me-2"></i>City:</strong> ${data.city}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-network-wired me-2"></i>ISP:</strong> ${data.isp}</p>
+                                    <p><strong><i class="fas fa-clock me-2"></i>Timezone:</strong> ${data.timezone}</p>
+                                    <p><strong><i class="fas fa-location-arrow me-2"></i>Coordinates:</strong> ${data.lat}, ${data.lon}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Show map if coordinates are available
+                        if (data.lat && data.lon) {
+                            const mapImg = document.getElementById('locationMap');
+                            mapImg.src = `https://maps.googleapis.com/maps/api/staticmap?center=${data.lat},${data.lon}&zoom=5&size=600x300&maptype=roadmap&markers=color:red%7C${data.lat},${data.lon}&key=YOUR_API_KEY`;
+                            mapImg.style.display = 'block';
+                        }
+                    } else {
+                        document.getElementById('ipInfoContent').innerHTML = `
+                            <div class="alert alert-warning">
+                                Could not fetch IP location information. Please try again later.
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('ipInfoContent').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error fetching IP information: ${error.message}
+                        </div>
+                    `;
+                });
+        });
+    </script>
+</body>
+</html>

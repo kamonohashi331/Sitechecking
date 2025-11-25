@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP Editor - HOSTER BD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <style>
+        /* Add the same styles from index.php */
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+        }
+        
+        .editor-container {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .editor-header {
+            background: var(--dark-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .editor-body {
+            background: #282c34;
+        }
+        
+        textarea.code-editor {
+            width: 100%;
+            min-height: 300px;
+            background: #282c34;
+            color: #abb2bf;
+            border: none;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            resize: vertical;
+        }
+        
+        .preview-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.php">
+                <i class="fas fa-cloud-upload-alt me-2"></i>HOSTER BD
+            </a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="index.php">
+                    <i class="fas fa-arrow-left me-1"></i>Back to File Manager
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="editor-container h-100">
+                    <div class="editor-header">
+                        <span>PHP Editor</span>
+                        <span class="badge bg-primary">PHP</span>
+                    </div>
+                    <div class="editor-body">
+                        <textarea id="phpEditor" class="code-editor" placeholder="Write your PHP code here...">&lt;?php
+echo "&lt;h1 style='color: #6c5ce7;'&gt;Hello PHP World!&lt;/h1&gt;";
+echo "&lt;p&gt;Current server time: " . date('Y-m-d H:i:s') . "&lt;/p&gt;";
+?&gt;</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="editor-container h-100">
+                    <div class="editor-header">
+                        <span>Live Preview</span>
+                        <button class="btn btn-sm btn-primary" onclick="runPhpCode()">
+                            <i class="fas fa-play me-1"></i>Run
+                        </button>
+                    </div>
+                    <div class="preview-container p-3" id="phpPreview"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <button class="btn btn-success btn-lg" onclick="savePhpCode()">
+                <i class="fas fa-save me-1"></i>Save as PHP File
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function runPhpCode() {
+            const phpCode = document.getElementById('phpEditor').value;
+            const previewFrame = document.getElementById('phpPreview');
+            
+            // For security reasons, we can't execute PHP client-side
+            // So we'll just show the code with a warning
+            previewFrame.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    PHP code cannot be executed in the preview. Save the file and view it to see the output.
+                </div>
+                <pre>${escapeHtml(phpCode)}</pre>
+            `;
+        }
+        
+        function savePhpCode() {
+            const phpCode = document.getElementById('phpEditor').value;
+            const filename = prompt("Enter file name (without extension):", "script") + ".php";
+            
+            if (filename) {
+                const formData = new FormData();
+                formData.append('file_content', phpCode);
+                formData.append('filename', filename);
+                
+                fetch('save_editor_file.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('File saved successfully!');
+                        window.location.href = 'index.php';
+                    } else {
+                        alert('Error saving file: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error: ' + error);
+                });
+            }
+        }
+        
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+        
+        // Run code on page load
+        document.addEventListener('DOMContentLoaded', runPhpCode);
+    </script>
+</body>
+</html>
