@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="mb-4">Admin Panel</h2>
+    <div class="card">
+        <div class="card-header">
+            <h4>Registered Users</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Email</th>
+                            <th>Bot Status</th>
+                            <th>Bot PID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user, bot in users_with_bots %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if bot.status.value == 'Running' %}
+                                    <span class="badge bg-success">Running</span>
+                                {% elif bot.status.value == 'Stopped' %}
+                                    <span class="badge bg-secondary">Stopped</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Error</span>
+                                {% endif %}
+                            </td>
+                            <td><code>{{ bot.pid or 'N/A' }}</code></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
