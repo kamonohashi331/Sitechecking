@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 1. METADATA AND STYLESHEETS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Bot Platform</title>
+
+    <!-- External CSS from a CDN (Content Delivery Network) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Our Custom Stylesheet for the Glassmorphism look -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <!-- 2. NAVIGATION BAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background: transparent !important;">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.home') }}"><i class="bi bi-robot"></i> Bot Platform</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <!-- Conditional links based on login status -->
+                    {% if current_user.is_authenticated %}
+                        <!-- This shows only if the user is an Admin -->
+                        {% if current_user.is_admin %}
+                            <a class="nav-link" href="{{ url_for('main.admin_panel') }}">Admin Panel</a>
+                        {% endif %}
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ url_for('main.logout') }}">Logout</a>
+                    {% else %}
+                        <!-- These links show for guests (not logged in) -->
+                        <a class="nav-link" href="{{ url_for('main.login') }}">Login</a>
+                        <a class="nav-link" href="{{ url_for('main.register') }}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3. MAIN CONTENT AREA -->
+    <main class="container">
+        <!-- Block for showing flashed messages (e.g., "Login Successful!") -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert" style="border: none;">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- The MOST IMPORTANT PART: The content block -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 4. JAVASCRIPT FILES -->
+    <!-- Bootstrap JS Bundle (includes Popper.js for dropdowns, modals, etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
