@@ -1,0 +1,11 @@
+uvicorn
+fastapi
+diskcache
+requests
+alembic
+pymysql
+dotenv
+werkzeug
+pyjwt
+pydantic
+pydantic[email]
