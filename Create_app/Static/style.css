@@ -1,0 +1,96 @@
+/* --- Background and Core Layout --- */
+body {
+    /* A nice, subtle gradient background is key for glassmorphism */
+    background: linear-gradient(to right, #83a4d4, #b6fbff);
+    background-attachment: fixed; /* Keeps the gradient in place while scrolling */
+    color: #fff; /* Make default text white for better contrast */
+}
+
+main.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* --- The Glassmorphism Effect for Cards --- */
+.card {
+    /* The magic happens here */
+    background: rgba(255, 255, 255, 0.15); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* The "frosted glass" blur effect */
+    -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
+    border-radius: 15px; /* Softer corners */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* A subtle border to catch the light */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* A soft shadow for depth */
+}
+
+/* --- Style Adjustments for Readability --- */
+.card-header, .card-footer {
+    background: transparent; /* Remove bootstrap's default card header color */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Subtle separator */
+}
+
+.card-title {
+    color: #fff;
+}
+
+.card-text, .form-label, .form-check-label {
+    color: #e9ecef; /* A slightly off-white for body text */
+}
+
+h2, h3, h4 {
+    color: #fff;
+    font-weight: 300; /* Lighter font for a modern feel */
+}
+
+/* --- Form and Button Styling --- */
+.form-control {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: none;
+    color: #fff;
+}
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #ced4da;
+    opacity: 1; /* Firefox */
+}
+
+/* --- Log Box Styling --- */
+.log-box {
+    background-color: rgba(33, 37, 41, 0.85); /* A darker, semi-transparent background for logs */
+    color: #f8f9fa;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    height: 400px;
+    overflow-y: scroll;
+    border-radius: 10px; /* Match the rounded corners */
+}
+
+/* Style the scrollbar for a better look */
+.log-box::-webkit-scrollbar {
+  width: 8px;
+}
+.log-box::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+.log-box::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+}
+
+/* --- Link and Text Muted Styling --- */
+.text-muted a {
+    color: #b6fbff;
+    text-decoration: none;
+}
+.text-muted a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
